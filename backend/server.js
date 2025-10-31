@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const dotenv = require("dotenv");
 const mainRouter = require("./src/app.routes");
 const NotFoundHandler = require("./src/common/exception/not-found.handler");
@@ -6,6 +7,7 @@ const AllExceptionHandler = require("./src/common/exception/all-exception.handle
 
 async function main() {
   const app = express();
+  const frontendPath = path.join(__dirname, "../frontend");
 
   dotenv.config();
 
@@ -13,6 +15,8 @@ async function main() {
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+
+  app.use(express.static(frontendPath));
 
   app.use(mainRouter);
 
