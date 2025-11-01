@@ -1,15 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frame Shop</title>
-    <link rel="stylesheet" href="./CSS/style.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>فروشگاه قاب آنلاین</title>
+  <link rel="stylesheet" href="CSS/style.css">
+  <script src="JS/main.js" defer></script>
 </head>
 <body>
-    <h1>Start</h1>
-    <p id="text"></p>
-    <button id="btn"> Click On Me ! </button>
-    <script src="./JS/main.js"></script>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-right">
+      <button class="btn auth-btn" id="login-btn">ورود</button>
+      <button class="btn auth-btn" id="signup-btn">ثبت نام</button>
+    </div>
+
+    <div class="header-center">
+      <input type="text" placeholder="جستجو..." class="search-bar">
+    </div>
+
+    <div class="header-left">
+      <button class="theme-btn">🌙</button>
+    </div>
+  </header>
+
+  <!-- Banner -->
+  <section class="banner">
+    <h1>خوش آمدید به فروشگاه قاب آنلاین</h1>
+  </section>
+
+  <!-- Products Section -->
+  <main class="products-section">
+    <h2 class="section-title">قاب‌ها</h2>
+    <div class="product-grid" id="product-grid">
+      <!-- Product cards will be added dynamically -->
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <button class="page-btn">«</button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <button class="page-btn">»</button>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 تمامی حقوق محفوظ است.</p>
+  </footer>
+
 </body>
 </html>
