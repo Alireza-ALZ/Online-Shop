@@ -159,3 +159,63 @@ body {
   margin-top: 40px;
   color: #654321;
 }
+
+
+/* Auth Pages */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+}
+
+.auth-form {
+  background-color: #fff;
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-form h3 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #654321;
+}
+
+.auth-form label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #444;
+}
+
+.auth-form input {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-family: inherit;
+}
+
+.submit-btn {
+  width: 100%;
+  background-color: #d9b382;
+}
+
+.auth-text {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.auth-text a {
+  color: #c29d6c;
+  text-decoration: none;
+}
+
+.auth-text a:hover {
+  text-decoration: underline;
+}
