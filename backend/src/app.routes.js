@@ -1,10 +1,6 @@
+const { AuthRouter } = require("./modules/auth/auth.routes");
 const mainRouter = require("express").Router();
 
-mainRouter.get("/", (req, res) => {
-  res.json({ message: "Hello from backend" });
-});
-mainRouter.get("/test", (req, res) => {
-  res.json({ testMessage: "Backend Test" });
-});
+mainRouter.use("/auth", AuthRouter);
 
 module.exports = mainRouter;
