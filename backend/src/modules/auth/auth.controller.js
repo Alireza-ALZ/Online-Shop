@@ -35,6 +35,21 @@ class AuthController {
       next(error);
     }
   }
+
+  async whoami(req, res, next) {
+    try {
+      const user = await this.#service.userInfo(req.user);
+      const filteredUserInfo = {
+        username: user.username,
+        email: user.email,
+        phone: user.phone,
+      };
+
+      res.json(filteredUserInfo);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new AuthController();

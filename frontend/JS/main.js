@@ -97,4 +97,12 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("theme", isDark ? "dark" : "light");
     });
   }
+
+  const accountBtn = document.getElementById("account-btn");
+  if (accountBtn) {
+    accountBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      window.location.href = "profile.html";
+    });
+  }
 });

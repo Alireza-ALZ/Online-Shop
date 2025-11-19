@@ -47,6 +47,10 @@ class AuthService {
     }
     throw "User does not exist";
   }
+
+  async userInfo(user) {
+    return await this.#model.findById(user.id);
+  }
 }
 
 module.exports = new AuthService();
