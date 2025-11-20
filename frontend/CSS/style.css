@@ -149,6 +149,33 @@ body {
   background-color: #c29d6c;
 }
 
+.qty-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #009688;
+  padding: 8px;
+  border-radius: 8px;
+  color: white;
+}
+
+.qty-box button {
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  border: none;
+  background: #004d40;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.qty-number {
+  font-weight: bold;
+  font-size: 18px;
+}
+
 /* Pagination */
 .pagination {
   display: flex;
