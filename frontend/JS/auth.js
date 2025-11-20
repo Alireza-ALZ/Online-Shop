@@ -63,3 +63,24 @@ if (signupForm) {
     }
   });
 }
+
+const loginPage = document.querySelector(".login-page");
+const signupPage = document.querySelector(".signup-page");
+
+if (loginPage || signupPage) {
+  const themeBtn = document.querySelector(".theme-btn");
+  const body = document.body;
+  const savedTheme = localStorage.getItem("theme");
+
+  if (savedTheme === "dark") {
+    body.classList.add("dark-mode");
+    themeBtn.textContent = "☀️";
+  }
+
+  themeBtn.addEventListener("click", () => {
+    body.classList.toggle("dark-mode");
+    const isDark = body.classList.contains("dark-mode");
+    themeBtn.textContent = isDark ? "☀️" : "🌙";
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  });
+}
