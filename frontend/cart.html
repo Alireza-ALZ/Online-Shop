@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>فروشگاه قاب آنلاین</title>
+  <title>سبد خرید - فروشگاه قاب آنلاین</title>
   <link rel="stylesheet" href="CSS/style.css">
-  <script src="JS/main.js" defer></script>
+  <script src="JS/cart.js" defer></script>
 </head>
 <body>
 
@@ -33,25 +33,18 @@
     </div>
   </header>
 
-  <!-- Banner -->
-  <section class="banner">
-    <h1>خوش آمدید به فروشگاه قاب آنلاین</h1>
-  </section>
-
-  <!-- Products Section -->
+  <!-- Cart Section -->
   <main class="products-section">
-    <h2 class="section-title">قاب‌ها</h2>
-    <div class="product-grid" id="product-grid">
-      <!-- Product cards will be added dynamically -->
+    <h2 class="section-title">سبد خرید شما</h2>
+
+    <div id="cart-items" class="product-grid">
+      <!-- Cart items will be dynamically rendered here -->
     </div>
 
-    <!-- Pagination -->
-    <div class="pagination">
-      <button class="page-btn">«</button>
-      <button class="page-btn active">1</button>
-      <button class="page-btn">2</button>
-      <button class="page-btn">3</button>
-      <button class="page-btn">»</button>
+    <div class="cart-summary">
+      <p>تعداد کل محصولات: <span id="total-items">0</span></p>
+      <p>مبلغ کل: <span id="total-price">0</span> تومان</p>
+      <button id="checkout-btn" class="btn">پرداخت</button>
     </div>
   </main>
 
