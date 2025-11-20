@@ -48,6 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
       productGrid.appendChild(card);
     });
+
+    restoreCartUI();
   }
 
   // ---------------------------
@@ -243,4 +245,14 @@ function updateCartButton(card, qty) {
       card.appendChild(node);
     }
   }
+}
+
+function restoreCartUI() {
+  const cart = getCart();
+
+  cart.forEach((item) => {
+    const card = document.querySelector(`.product-card[data-id="${item.id}"]`);
+
+    if (card) updateCartButton(card, item.qty);
+  });
 }
