@@ -10,25 +10,25 @@ document.addEventListener("DOMContentLoaded", () => {
         id: 1,
         title: "قاب چوبی کلاسیک",
         price: "120,000 تومان",
-        image: "/frontend/src/images/1.jpg",
+        image: "/src/images/1.jpg",
       },
       {
         id: 2,
         title: "قاب مدرن مشکی",
         price: "150,000 تومان",
-        image: "/frontend/src/images/2.jpg",
+        image: "/src/images/2.jpg",
       },
       {
         id: 3,
         title: "قاب سفید مینیمال",
         price: "130,000 تومان",
-        image: "/frontend/src/images/3.jpg",
+        image: "/src/images/3.jpg",
       },
       {
         id: 4,
         title: "قاب طلایی لوکس",
         price: "200,000 تومان",
-        image: "/frontend/src/images/4.jpg",
+        image: "/src/images/4.jpg",
       },
     ];
 

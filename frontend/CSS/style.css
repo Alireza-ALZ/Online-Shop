@@ -63,7 +63,7 @@ body {
 
 /* Banner */
 .banner {
-  background: url("/frontend/src/images/background.jpg") center/cover;
+  background: url("/src/images/background.jpg") center/cover;
   color: white;
   text-align: center;
   padding: 80px 20px;
