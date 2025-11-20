@@ -63,7 +63,7 @@ body {
 
 /* Banner */
 .banner {
-  background: url('https://images.unsplash.com/photo-1584905066893-7d5c142ba4c3?auto=format&fit=crop&w=1200&q=80') center/cover;
+  background: url("/frontend/src/images/background.jpg") center/cover;
   color: white;
   text-align: center;
   padding: 80px 20px;
@@ -108,10 +108,21 @@ body {
   transform: translateY(-5px);
 }
 
-.product-card img {
+/* Product card image wrapper */
+.product-card .image-wrapper {
   width: 100%;
-  height: 200px;
-  object-fit: cover;
+  aspect-ratio: 4 / 5;   /* Choose ratio: 4/5 or 3/4 or 4/3 */
+  overflow: hidden;
+  border-radius: 8px;
+  background: #eee;      /* fallback color if image loads slowly */
+}
+
+/* Image inside wrapper */
+.product-card .image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;      /* Uniform look */
+  display: block;
 }
 
 .product-card h3 {
