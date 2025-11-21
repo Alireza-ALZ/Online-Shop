@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("theme", isDark ? "dark" : "light");
   });
 
-  const cartItemsContainer = document.getElementById("cart-items");
+  const cartContainer = document.getElementById("cart-container");
   const totalItemsElem = document.getElementById("total-items");
   const totalPriceElem = document.getElementById("total-price");
 
@@ -54,48 +54,90 @@ document.addEventListener("DOMContentLoaded", () => {
   const getCart = () => JSON.parse(localStorage.getItem("cart")) || [];
   const saveCart = (cart) => localStorage.setItem("cart", JSON.stringify(cart));
 
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat("fa-IR").format(price) + " تومان";
+  };
+
   const renderCart = () => {
     const cart = getCart();
-    cartItemsContainer.innerHTML = "";
+    cartContainer.innerHTML = "";
 
     if (cart.length === 0) {
-      cartItemsContainer.innerHTML = `<p style="text-align:center; width:100%; font-size:1.2rem;">سبد خرید شما خالی است.</p>`;
-      totalItemsElem.textContent = 0;
-      totalPriceElem.textContent = 0;
+      cartContainer.innerHTML = `
+        <div class="empty-cart-message">
+          <h3>سبد خرید شما خالی است</h3>
+          <p>می‌توانید از محصولات ما دیدن کنید و موارد مورد نظر خود را به سبد خرید اضافه نمایید.</p>
+          <a href="index.html" class="btn">مشاهده محصولات</a>
+        </div>
+      `;
+      totalItemsElem.textContent = "0";
+      totalPriceElem.textContent = "0";
       return;
     }
 
     let totalItems = 0;
     let totalPrice = 0;
 
-    cart.forEach((item) => {
+    // Create cart table
+    const table = document.createElement("table");
+    table.className = "cart-table";
+
+    table.innerHTML = `
+      <thead class="cart-table-header">
+        <tr>
+          <th>ردیف</th>
+          <th>نام محصول</th>
+          <th>قیمت</th>
+          <th>تعداد</th>
+          <th>حذف</th>
+        </tr>
+      </thead>
+      <tbody class="cart-table-body" id="cart-items">
+      </tbody>
+    `;
+
+    const tbody = table.querySelector("#cart-items");
+
+    cart.forEach((item, index) => {
       totalItems += item.qty;
-      const priceNumber = Number(item.price.replace(/[^0-9]/g, "")); // remove commas, "تومان"
+      const priceNumber = Number(item.price.replace(/[^0-9]/g, "")); // Remove non-numeric characters
       totalPrice += priceNumber * item.qty;
 
-      const card = document.createElement("div");
-      card.className = "product-card";
-      card.setAttribute("data-id", item.id);
+      const row = document.createElement("tr");
+      row.className = "cart-item-row";
+      row.setAttribute("data-id", item.id);
 
-      card.innerHTML = `
-        <div class="image-wrapper">
-          <img src="${item.image}" alt="${item.title}">
-        </div>
-        <h3>${item.title}</h3>
-        <p>${item.price}</p>
-        <div class="qty-box">
-          <button class="qty-minus" aria-label="decrease">−</button>
-          <span class="qty-number">${item.qty}</span>
-          <button class="qty-plus" aria-label="increase">+</button>
-        </div>
-        <button class="remove-btn btn" style="margin-top:10px;">حذف</button>
+      row.innerHTML = `
+        <td class="cart-item-row">${index + 1}</td>
+        <td>
+          <div class="cart-item-product">
+            <img src="${item.image}" alt="${
+        item.title
+      }" class="cart-item-image">
+            <span class="cart-item-name">${item.title}</span>
+          </div>
+        </td>
+        <td class="cart-item-price">${item.price}</td>
+        <td>
+          <div class="cart-quantity-controls">
+            <button class="quantity-btn qty-minus" ${
+              item.qty <= 1 ? "disabled" : ""
+            }>−</button>
+            <span class="quantity-number">${item.qty}</span>
+            <button class="quantity-btn qty-plus">+</button>
+          </div>
+        </td>
+        <td>
+          <button class="cart-remove-btn">حذف</button>
+        </td>
       `;
 
-      cartItemsContainer.appendChild(card);
+      tbody.appendChild(row);
     });
 
+    cartContainer.appendChild(table);
     totalItemsElem.textContent = totalItems;
-    totalPriceElem.textContent = totalPrice.toLocaleString();
+    totalPriceElem.textContent = formatPrice(totalPrice);
   };
 
   const updateCartCount = () => {
@@ -105,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (countElement) countElement.textContent = count;
   };
 
-  // Event delegation for quantity buttons
+  // Event delegation for quantity buttons and remove buttons
   document.addEventListener("click", (e) => {
     const cart = getCart();
 
@@ -113,12 +155,15 @@ document.addEventListener("DOMContentLoaded", () => {
       e.target.classList.contains("qty-plus") ||
       e.target.classList.contains("qty-minus")
     ) {
-      const card = e.target.closest(".product-card");
-      const id = card.getAttribute("data-id");
+      const row = e.target.closest("tr");
+      const id = row.getAttribute("data-id");
       const item = cart.find((p) => p.id == id);
 
-      if (e.target.classList.contains("qty-plus")) item.qty += 1;
-      else if (e.target.classList.contains("qty-minus")) item.qty -= 1;
+      if (e.target.classList.contains("qty-plus")) {
+        item.qty += 1;
+      } else if (e.target.classList.contains("qty-minus")) {
+        item.qty -= 1;
+      }
 
       // Remove if qty <= 0
       const newCart = cart.filter((p) => p.qty > 0);
@@ -127,9 +172,9 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartCount();
     }
 
-    if (e.target.classList.contains("remove-btn")) {
-      const card = e.target.closest(".product-card");
-      const id = card.getAttribute("data-id");
+    if (e.target.classList.contains("cart-remove-btn")) {
+      const row = e.target.closest("tr");
+      const id = row.getAttribute("data-id");
 
       const newCart = cart.filter((p) => p.id != id);
       saveCart(newCart);
@@ -138,10 +183,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (e.target.id === "checkout-btn") {
-      alert("پرداخت انجام شد! (شبیه‌سازی)");
-      localStorage.removeItem("cart");
-      renderCart();
-      updateCartCount();
+      const cart = getCart();
+      if (cart.length === 0) {
+        alert("سبد خرید شما خالی است!");
+        return;
+      }
+
+      if (confirm("آیا از پرداخت سفارش مطمئن هستید؟")) {
+        alert("پرداخت با موفقیت انجام شد! سفارش شما ثبت گردید.");
+        localStorage.removeItem("cart");
+        renderCart();
+        updateCartCount();
+      }
     }
   });
 
