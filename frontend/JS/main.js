@@ -177,6 +177,9 @@ function addToCart(product) {
 
   const existing = cart.find((item) => item.id == product.id);
 
+  const newQty = existing ? existing.qty : 1;
+  syncCartItem(product.id, newQty);
+
   if (existing) {
     existing.qty += 1;
     saveCart(cart);
@@ -194,6 +197,7 @@ function increaseQty(id) {
   let cart = getCart();
   let item = cart.find((p) => p.id == id);
   item.qty += 1;
+  syncCartItem(id, item.qty);
   saveCart(cart);
   updateCartCount();
   return item.qty;
@@ -205,11 +209,13 @@ function decreaseQty(id) {
 
   if (item.qty > 1) {
     item.qty -= 1;
+    syncCartItem(id, item.qty);
     saveCart(cart);
     updateCartCount();
     return item.qty;
   } else {
     cart = cart.filter((p) => p.id != id);
+    syncCartRemoveItem(id);
     saveCart(cart);
     updateCartCount();
     return 0;
@@ -277,4 +283,32 @@ function updateCartCount() {
   if (countElement) {
     countElement.textContent = count;
   }
+}
+
+// Cart Req To Backend
+async function syncCartItem(productId, quantity) {
+  const token = localStorage.getItem("token");
+  const userId = JSON.parse(atob(token.split(".")[1])).id;
+
+  await fetch("http://localhost:3000/cart/add", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ userId, productId, quantity }),
+  });
+}
+async function syncCartRemoveItem(productId) {
+  const token = localStorage.getItem("token");
+  const userId = JSON.parse(atob(token.split(".")[1])).id;
+
+  await fetch("http://localhost:3000/cart/remove", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ userId, productId }),
+  });
 }
