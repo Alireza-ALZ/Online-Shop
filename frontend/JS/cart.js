@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("logout-btn").addEventListener("click", (e) => {
         e.preventDefault();
         localStorage.removeItem("token");
+        localStorage.removeItem("cart");
         window.location.href = "index.html";
       });
 

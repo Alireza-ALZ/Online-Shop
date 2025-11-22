@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("logout-btn").addEventListener("click", (e) => {
         e.preventDefault();
         localStorage.removeItem("token");
+        localStorage.removeItem("cart");
         window.location.reload();
       });
     } else {

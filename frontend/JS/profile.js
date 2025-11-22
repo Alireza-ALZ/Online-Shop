@@ -50,6 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Logout button
   document.getElementById("logout-btn").addEventListener("click", () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("cart");
     window.location.href = "index.html";
   });
 

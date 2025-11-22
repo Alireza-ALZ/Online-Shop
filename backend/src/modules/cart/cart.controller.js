@@ -39,7 +39,7 @@ class CartController {
 
       const cart = await this.#service.getItems(userId);
 
-      return res.json(cart.items);
+      return res.json(cart?.items || []);
     } catch (error) {
       next(error);
     }
