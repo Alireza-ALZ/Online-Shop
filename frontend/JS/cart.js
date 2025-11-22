@@ -166,6 +166,8 @@ document.addEventListener("DOMContentLoaded", () => {
         item.qty -= 1;
       }
 
+      syncCartAddItem(id, item.qty);
+
       // Remove if qty <= 0
       const newCart = cart.filter((p) => p.qty > 0);
       saveCart(newCart);
@@ -179,6 +181,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const newCart = cart.filter((p) => p.id != id);
       saveCart(newCart);
+
+      syncCartRemoveItem(id);
+
       renderCart();
       updateCartCount();
     }
@@ -202,3 +207,31 @@ document.addEventListener("DOMContentLoaded", () => {
   renderCart();
   updateCartCount();
 });
+
+// Cart Req To Backend
+async function syncCartAddItem(productId, quantity) {
+  const token = localStorage.getItem("token");
+  const userId = JSON.parse(atob(token.split(".")[1])).id;
+
+  await fetch("http://localhost:3000/cart/add", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ userId, productId, quantity }),
+  });
+}
+async function syncCartRemoveItem(productId) {
+  const token = localStorage.getItem("token");
+  const userId = JSON.parse(atob(token.split(".")[1])).id;
+
+  await fetch("http://localhost:3000/cart/remove", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ userId, productId }),
+  });
+}
