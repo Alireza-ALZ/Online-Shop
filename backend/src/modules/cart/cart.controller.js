@@ -32,6 +32,18 @@ class CartController {
       next(error);
     }
   }
+
+  async getFromCart(req, res, next) {
+    try {
+      const { userId } = req.params;
+
+      const cart = await this.#service.getItems(userId);
+
+      return res.json(cart.items);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new CartController();

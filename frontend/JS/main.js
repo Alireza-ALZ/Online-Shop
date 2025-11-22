@@ -1,43 +1,43 @@
-document.addEventListener("DOMContentLoaded", () => {
+const sampleProducts = [
+  {
+    id: 1,
+    title: "قاب گوشی اپل",
+    price: "120,000 تومان",
+    image: "/src/images/1.jpg",
+  },
+  {
+    id: 2,
+    title: "قاب گوشی سامسونگ",
+    price: "150,000 تومان",
+    image: "/src/images/2.jpg",
+  },
+  {
+    id: 3,
+    title: "قاب گوشی شیایومی",
+    price: "130,000 تومان",
+    image: "/src/images/3.jpg",
+  },
+  {
+    id: 4,
+    title: "قاب گوشی هواوی",
+    price: "200,000 تومان",
+    image: "/src/images/4.jpg",
+  },
+  {
+    id: 5,
+    title: "قاب گوشی ال جی",
+    price: "200,000 تومان",
+    image: "/src/images/5.jpg",
+  },
+];
+
+document.addEventListener("DOMContentLoaded", async () => {
   // ---------------------------
   // 🔹 Render products safely
   // ---------------------------
   const productGrid = document.getElementById("product-grid");
 
   if (productGrid) {
-    const sampleProducts = [
-      {
-        id: 1,
-        title: "قاب گوشی اپل",
-        price: "120,000 تومان",
-        image: "/src/images/1.jpg",
-      },
-      {
-        id: 2,
-        title: "قاب گوشی سامسونگ",
-        price: "150,000 تومان",
-        image: "/src/images/2.jpg",
-      },
-      {
-        id: 3,
-        title: "قاب گوشی شیایومی",
-        price: "130,000 تومان",
-        image: "/src/images/3.jpg",
-      },
-      {
-        id: 4,
-        title: "قاب گوشی هواوی",
-        price: "200,000 تومان",
-        image: "/src/images/4.jpg",
-      },
-      {
-        id: 5,
-        title: "قاب گوشی ال جی",
-        price: "200,000 تومان",
-        image: "/src/images/5.jpg",
-      },
-    ];
-
     sampleProducts.forEach((p) => {
       const card = document.createElement("div");
       card.className = "product-card";
@@ -178,7 +178,7 @@ function addToCart(product) {
   const existing = cart.find((item) => item.id == product.id);
 
   const newQty = existing ? existing.qty : 1;
-  syncCartItem(product.id, newQty);
+  syncCartAddItem(product.id, newQty);
 
   if (existing) {
     existing.qty += 1;
@@ -197,7 +197,7 @@ function increaseQty(id) {
   let cart = getCart();
   let item = cart.find((p) => p.id == id);
   item.qty += 1;
-  syncCartItem(id, item.qty);
+  syncCartAddItem(id, item.qty);
   saveCart(cart);
   updateCartCount();
   return item.qty;
@@ -209,7 +209,7 @@ function decreaseQty(id) {
 
   if (item.qty > 1) {
     item.qty -= 1;
-    syncCartItem(id, item.qty);
+    syncCartAddItem(id, item.qty);
     saveCart(cart);
     updateCartCount();
     return item.qty;
@@ -286,7 +286,7 @@ function updateCartCount() {
 }
 
 // Cart Req To Backend
-async function syncCartItem(productId, quantity) {
+async function syncCartAddItem(productId, quantity) {
   const token = localStorage.getItem("token");
   const userId = JSON.parse(atob(token.split(".")[1])).id;
 

@@ -47,6 +47,12 @@ class CartService {
 
     return cart;
   }
+
+  async getItems(userId) {
+    const cart = await this.#model.findOne({ userId });
+
+    return cart;
+  }
 }
 
 module.exports = new CartService();
