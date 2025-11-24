@@ -1,5 +1,6 @@
 import applyTheme from "./utils/theme.js";
 import sampleProducts from "./utils/sample.products.js";
+import cartDatabase from "./utils/cart.database.js";
 
 const BASE_URL = "http://localhost:3000";
 const loginForm = document.getElementById("login-form");
@@ -30,7 +31,7 @@ if (loginForm) {
 
         if (data.token) localStorage.setItem("token", data.token);
 
-        const items = await syncCartGetItems();
+        const items = await cartDatabase.syncCartGetItems();
         const cart = createCartForLocalStorage(items);
 
         saveCart(cart);
@@ -76,22 +77,6 @@ if (signupForm) {
   });
 }
 
-// Load user cart from database
-async function syncCartGetItems() {
-  const token = localStorage.getItem("token");
-  const userId = JSON.parse(atob(token.split(".")[1])).id;
-
-  const res = await fetch(`http://localhost:3000/cart/get-items/${userId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (res.ok) return await res.json();
-  return [];
-}
 function createCartForLocalStorage(items) {
   const cart = [];
 
