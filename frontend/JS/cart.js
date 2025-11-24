@@ -1,39 +1,28 @@
+import isTokenExist from "./check.token.js";
 import applyTheme from "./theme.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const authLink = document.getElementById("auth-link");
-  const token = localStorage.getItem("token");
-
-  if (authLink) {
-    if (token) {
-      authLink.innerHTML = `
-        <a href="#" id="account-btn" class="btn auth-btn">حساب من</a>
-        <a href="#" id="logout-btn" class="btn auth-btn logout-btn">خروج</a>
-      `;
-
-      document.getElementById("logout-btn").addEventListener("click", (e) => {
-        e.preventDefault();
-        localStorage.removeItem("token");
-        localStorage.removeItem("cart");
-        window.location.href = "index.html";
-      });
-
-      const accountBtn = document.getElementById("account-btn");
-      if (accountBtn) {
-        accountBtn.addEventListener("click", (e) => {
-          e.preventDefault();
-          window.location.href = "profile.html";
-        });
-      }
-    } else {
-      authLink.innerHTML = `
-        <a href="login.html" class="btn auth-btn">ورود</a>
-        <a href="signup.html" class="btn auth-btn">ثبت نام</a>
-      `;
-    }
-  }
+  isTokenExist();
 
   applyTheme();
+
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("token");
+      localStorage.removeItem("cart");
+      window.location.href = "index.html";
+    });
+  }
+
+  const accountBtn = document.getElementById("account-btn");
+  if (accountBtn) {
+    accountBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      window.location.href = "profile.html";
+    });
+  }
 
   const cartContainer = document.getElementById("cart-container");
   const totalItemsElem = document.getElementById("total-items");
