@@ -1,28 +1,16 @@
-import isTokenExist from "./check.token.js";
-import applyTheme from "./theme.js";
+import accountHandler from "./utils/account.handler.js";
+import isTokenExist from "./utils/check.token.js";
+import logoutHandler from "./utils/logout.handler.js";
+import applyTheme from "./utils/theme.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   isTokenExist();
 
   applyTheme();
 
-  const logoutBtn = document.getElementById("logout-btn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      localStorage.removeItem("token");
-      localStorage.removeItem("cart");
-      window.location.href = "index.html";
-    });
-  }
+  logoutHandler();
 
-  const accountBtn = document.getElementById("account-btn");
-  if (accountBtn) {
-    accountBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      window.location.href = "profile.html";
-    });
-  }
+  accountHandler();
 
   const cartContainer = document.getElementById("cart-container");
   const totalItemsElem = document.getElementById("total-items");

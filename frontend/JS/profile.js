@@ -1,9 +1,8 @@
-import applyTheme from "./theme.js";
+import logoutHandler from "./utils/logout.handler.js";
+import applyTheme from "./utils/theme.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("token");
-
-  // If no token -> redirect to login
   if (!token) {
     window.location.href = "login.html";
     return;
@@ -11,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applyTheme();
 
-  // Load user info from backend
   fetch("http://localhost:3000/auth/whoami", {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -25,7 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Fill profile fields
       document.getElementById("profile-username").textContent = data.username;
       document.getElementById("profile-email").textContent = data.email || "—";
       document.getElementById("profile-phone").textContent = data.phone || "—";
@@ -34,12 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error fetching profile:", err);
     });
 
-  // Logout button
-  document.getElementById("logout-btn").addEventListener("click", () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("cart");
-    window.location.href = "index.html";
-  });
+  logoutHandler();
 
   updateCartCount();
 });

@@ -1,43 +1,10 @@
-import isTokenExist from "./check.token.js";
-import applyTheme from "./theme.js";
-
-const sampleProducts = [
-  {
-    id: 1,
-    title: "قاب گوشی اپل",
-    price: "120,000 تومان",
-    image: "/src/images/1.jpg",
-  },
-  {
-    id: 2,
-    title: "قاب گوشی سامسونگ",
-    price: "150,000 تومان",
-    image: "/src/images/2.jpg",
-  },
-  {
-    id: 3,
-    title: "قاب گوشی شیایومی",
-    price: "130,000 تومان",
-    image: "/src/images/3.jpg",
-  },
-  {
-    id: 4,
-    title: "قاب گوشی هواوی",
-    price: "200,000 تومان",
-    image: "/src/images/4.jpg",
-  },
-  {
-    id: 5,
-    title: "قاب گوشی ال جی",
-    price: "200,000 تومان",
-    image: "/src/images/5.jpg",
-  },
-];
+import isTokenExist from "./utils/check.token.js";
+import applyTheme from "./utils/theme.js";
+import logoutHandler from "./utils/logout.handler.js";
+import sampleProducts from "./utils/sample.products.js";
+import accountHandler from "./utils/account.handler.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // ---------------------------
-  // 🔹 Render products safely
-  // ---------------------------
   const productGrid = document.getElementById("product-grid");
 
   if (productGrid) {
@@ -66,23 +33,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   applyTheme();
 
-  const logoutBtn = document.getElementById("logout-btn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      localStorage.removeItem("token");
-      localStorage.removeItem("cart");
-      window.location.reload();
-    });
-  }
+  logoutHandler();
 
-  const accountBtn = document.getElementById("account-btn");
-  if (accountBtn) {
-    accountBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      window.location.href = "profile.html";
-    });
-  }
+  accountHandler();
 });
 
 document.addEventListener("click", (e) => {
