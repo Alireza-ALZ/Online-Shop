@@ -3,6 +3,7 @@ import isTokenExist from "./utils/check.token.js";
 import logoutHandler from "./utils/logout.handler.js";
 import applyTheme from "./utils/theme.js";
 import cartDatabase from "./utils/cart.database.js";
+import { getCart, saveCart, updateCartCount } from "./utils/cart.handler.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   isTokenExist();
@@ -16,10 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const cartContainer = document.getElementById("cart-container");
   const totalItemsElem = document.getElementById("total-items");
   const totalPriceElem = document.getElementById("total-price");
-
-  // Fetch cart from localStorage
-  const getCart = () => JSON.parse(localStorage.getItem("cart")) || [];
-  const saveCart = (cart) => localStorage.setItem("cart", JSON.stringify(cart));
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("fa-IR").format(price) + " تومان";
@@ -107,14 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
     totalPriceElem.textContent = formatPrice(totalPrice);
   };
 
-  const updateCartCount = () => {
-    const cart = getCart();
-    const count = cart.reduce((sum, item) => sum + item.qty, 0);
-    const countElement = document.getElementById("cart-count");
-    if (countElement) countElement.textContent = count;
-  };
-
-  // Event delegation for quantity buttons and remove buttons
   document.addEventListener("click", (e) => {
     const cart = getCart();
 

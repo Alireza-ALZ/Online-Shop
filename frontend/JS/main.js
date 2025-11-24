@@ -4,6 +4,7 @@ import logoutHandler from "./utils/logout.handler.js";
 import sampleProducts from "./utils/sample.products.js";
 import accountHandler from "./utils/account.handler.js";
 import cartDatabase from "./utils/cart.database.js";
+import { getCart, saveCart, updateCartCount } from "./utils/cart.handler.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const productGrid = document.getElementById("product-grid");
@@ -81,14 +82,6 @@ document.addEventListener("click", (e) => {
     return;
   }
 });
-
-function getCart() {
-  return JSON.parse(localStorage.getItem("cart")) || [];
-}
-
-function saveCart(cart) {
-  localStorage.setItem("cart", JSON.stringify(cart));
-}
 
 function addToCart(product) {
   let cart = getCart();
@@ -191,14 +184,4 @@ function restoreCartUI() {
 
     if (card) updateCartButton(card, item.qty);
   });
-}
-
-function updateCartCount() {
-  const cart = getCart();
-  const count = cart.reduce((sum, item) => sum + item.qty, 0);
-
-  const countElement = document.getElementById("cart-count");
-  if (countElement) {
-    countElement.textContent = count;
-  }
 }
