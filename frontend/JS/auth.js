@@ -1,144 +1,77 @@
-const sampleProducts = [
-  {
-    id: 1,
-    title: "قاب گوشی اپل",
-    price: "120,000 تومان",
-    image: "/src/images/1.jpg",
-  },
-  {
-    id: 2,
-    title: "قاب گوشی سامسونگ",
-    price: "150,000 تومان",
-    image: "/src/images/2.jpg",
-  },
-  {
-    id: 3,
-    title: "قاب گوشی شیایومی",
-    price: "130,000 تومان",
-    image: "/src/images/3.jpg",
-  },
-  {
-    id: 4,
-    title: "قاب گوشی هواوی",
-    price: "200,000 تومان",
-    image: "/src/images/4.jpg",
-  },
-  {
-    id: 5,
-    title: "قاب گوشی ال جی",
-    price: "200,000 تومان",
-    image: "/src/images/5.jpg",
-  },
-];
+import applyTheme from "./utils/theme.js";
+import sampleProducts from "./utils/sample.products.js";
+import cartDatabase from "./utils/cart.database.js";
 
-const BASE_URL = "http://localhost:3000";
+document.addEventListener("DOMContentLoaded", () => {
+  applyTheme();
+});
+
 const loginForm = document.getElementById("login-form");
 const signupForm = document.getElementById("signup-form");
 
-if (loginForm) {
-  loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-    try {
-      const res = await fetch(`${BASE_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
+  try {
+    const res = await fetch("http://localhost:3000/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (res.ok) {
-        alert("ورود با موفقیت انجام شد ✅");
+    if (res.ok) {
+      alert("ورود با موفقیت انجام شد ✅");
 
-        if (data.token) localStorage.setItem("token", data.token);
+      if (data.token) localStorage.setItem("token", data.token);
 
-        const items = await syncCartGetItems();
-        const cart = createCartForLocalStorage(items);
+      const items = await cartDatabase.syncCartGetItems();
+      const cart = createCartForLocalStorage(items);
 
-        saveCart(cart);
+      localStorage.setItem("cart", JSON.stringify(cart));
 
-        window.location.href = "index.html";
-      } else {
-        alert(data.message || "خطا در ورود ❌");
-      }
-    } catch (err) {
-      alert("خطا در ارتباط با سرور ❌");
+      window.location.href = "index.html";
+    } else {
+      alert(data.message || "خطا در ورود ❌");
     }
-  });
-}
-
-if (signupForm) {
-  signupForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const phone = document.getElementById("phone").value.trim();
-
-    try {
-      const res = await fetch(`${BASE_URL}/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password, email, phone }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        alert("ثبت نام با موفقیت انجام شد ✅");
-        window.location.href = "login.html";
-      } else {
-        alert(data.message || "خطا در ثبت نام ❌");
-      }
-    } catch (err) {
-      alert("خطا در ارتباط با سرور ❌");
-      console.error(err);
-    }
-  });
-}
-
-const loginPage = document.querySelector(".login-page");
-const signupPage = document.querySelector(".signup-page");
-
-if (loginPage || signupPage) {
-  const themeBtn = document.querySelector(".theme-btn");
-  const body = document.body;
-  const savedTheme = localStorage.getItem("theme");
-
-  if (savedTheme === "dark") {
-    body.classList.add("dark-mode");
-    themeBtn.textContent = "☀️";
+  } catch (err) {
+    alert("خطا در ارتباط با سرور ❌");
   }
+});
 
-  themeBtn.addEventListener("click", () => {
-    body.classList.toggle("dark-mode");
-    const isDark = body.classList.contains("dark-mode");
-    themeBtn.textContent = isDark ? "☀️" : "🌙";
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  });
-}
+signupForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-// Load user cart from database
-async function syncCartGetItems() {
-  const token = localStorage.getItem("token");
-  const userId = JSON.parse(atob(token.split(".")[1])).id;
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const phone = document.getElementById("phone").value.trim();
 
-  const res = await fetch(`http://localhost:3000/cart/get-items/${userId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  try {
+    const res = await fetch("http://localhost:3000/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password, email, phone }),
+    });
 
-  if (res.ok) return await res.json();
-  return [];
-}
+    const data = await res.json();
+
+    if (res.ok) {
+      alert("ثبت نام با موفقیت انجام شد ✅");
+      window.location.href = "login.html";
+    } else {
+      alert(data.message || "خطا در ثبت نام ❌");
+    }
+  } catch (err) {
+    alert("خطا در ارتباط با سرور ❌");
+    console.error(err);
+  }
+});
+
 function createCartForLocalStorage(items) {
   const cart = [];
 
@@ -152,7 +85,4 @@ function createCartForLocalStorage(items) {
   });
 
   return cart;
-}
-function saveCart(cart) {
-  localStorage.setItem("cart", JSON.stringify(cart));
 }

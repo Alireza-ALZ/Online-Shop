@@ -1,59 +1,22 @@
+import accountHandler from "./utils/account.handler.js";
+import isTokenExist from "./utils/check.token.js";
+import logoutHandler from "./utils/logout.handler.js";
+import applyTheme from "./utils/theme.js";
+import cartDatabase from "./utils/cart.database.js";
+import { getCart, saveCart, updateCartCount } from "./utils/cart.handler.js";
+
 document.addEventListener("DOMContentLoaded", () => {
-  const authLink = document.getElementById("auth-link");
-  const token = localStorage.getItem("token");
+  isTokenExist();
 
-  if (authLink) {
-    if (token) {
-      authLink.innerHTML = `
-        <a href="#" id="account-btn" class="btn auth-btn">حساب من</a>
-        <a href="#" id="logout-btn" class="btn auth-btn logout-btn">خروج</a>
-      `;
+  applyTheme();
 
-      document.getElementById("logout-btn").addEventListener("click", (e) => {
-        e.preventDefault();
-        localStorage.removeItem("token");
-        localStorage.removeItem("cart");
-        window.location.href = "index.html";
-      });
+  logoutHandler();
 
-      const accountBtn = document.getElementById("account-btn");
-      if (accountBtn) {
-        accountBtn.addEventListener("click", (e) => {
-          e.preventDefault();
-          window.location.href = "profile.html";
-        });
-      }
-    } else {
-      authLink.innerHTML = `
-        <a href="login.html" class="btn auth-btn">ورود</a>
-        <a href="signup.html" class="btn auth-btn">ثبت نام</a>
-      `;
-    }
-  }
-
-  const themeBtn = document.querySelector(".theme-btn");
-  const body = document.body;
-  const savedTheme = localStorage.getItem("theme");
-
-  if (savedTheme === "dark") {
-    body.classList.add("dark-mode");
-    themeBtn.textContent = "☀️";
-  }
-
-  themeBtn.addEventListener("click", () => {
-    body.classList.toggle("dark-mode");
-    const isDark = body.classList.contains("dark-mode");
-    themeBtn.textContent = isDark ? "☀️" : "🌙";
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  });
+  accountHandler();
 
   const cartContainer = document.getElementById("cart-container");
   const totalItemsElem = document.getElementById("total-items");
   const totalPriceElem = document.getElementById("total-price");
-
-  // Fetch cart from localStorage
-  const getCart = () => JSON.parse(localStorage.getItem("cart")) || [];
-  const saveCart = (cart) => localStorage.setItem("cart", JSON.stringify(cart));
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("fa-IR").format(price) + " تومان";
@@ -141,14 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
     totalPriceElem.textContent = formatPrice(totalPrice);
   };
 
-  const updateCartCount = () => {
-    const cart = getCart();
-    const count = cart.reduce((sum, item) => sum + item.qty, 0);
-    const countElement = document.getElementById("cart-count");
-    if (countElement) countElement.textContent = count;
-  };
-
-  // Event delegation for quantity buttons and remove buttons
   document.addEventListener("click", (e) => {
     const cart = getCart();
 
@@ -166,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
         item.qty -= 1;
       }
 
-      syncCartAddItem(id, item.qty);
+      cartDatabase.syncCartAddItem(id, item.qty);
 
       // Remove if qty <= 0
       const newCart = cart.filter((p) => p.qty > 0);
@@ -182,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const newCart = cart.filter((p) => p.id != id);
       saveCart(newCart);
 
-      syncCartRemoveItem(id);
+      cartDatabase.syncCartRemoveItem(id);
 
       renderCart();
       updateCartCount();
@@ -207,31 +162,3 @@ document.addEventListener("DOMContentLoaded", () => {
   renderCart();
   updateCartCount();
 });
-
-// Cart Req To Backend
-async function syncCartAddItem(productId, quantity) {
-  const token = localStorage.getItem("token");
-  const userId = JSON.parse(atob(token.split(".")[1])).id;
-
-  await fetch("http://localhost:3000/cart/add", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ userId, productId, quantity }),
-  });
-}
-async function syncCartRemoveItem(productId) {
-  const token = localStorage.getItem("token");
-  const userId = JSON.parse(atob(token.split(".")[1])).id;
-
-  await fetch("http://localhost:3000/cart/remove", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ userId, productId }),
-  });
-}

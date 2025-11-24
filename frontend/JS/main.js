@@ -1,40 +1,12 @@
-const sampleProducts = [
-  {
-    id: 1,
-    title: "قاب گوشی اپل",
-    price: "120,000 تومان",
-    image: "/src/images/1.jpg",
-  },
-  {
-    id: 2,
-    title: "قاب گوشی سامسونگ",
-    price: "150,000 تومان",
-    image: "/src/images/2.jpg",
-  },
-  {
-    id: 3,
-    title: "قاب گوشی شیایومی",
-    price: "130,000 تومان",
-    image: "/src/images/3.jpg",
-  },
-  {
-    id: 4,
-    title: "قاب گوشی هواوی",
-    price: "200,000 تومان",
-    image: "/src/images/4.jpg",
-  },
-  {
-    id: 5,
-    title: "قاب گوشی ال جی",
-    price: "200,000 تومان",
-    image: "/src/images/5.jpg",
-  },
-];
+import isTokenExist from "./utils/check.token.js";
+import applyTheme from "./utils/theme.js";
+import logoutHandler from "./utils/logout.handler.js";
+import sampleProducts from "./utils/sample.products.js";
+import accountHandler from "./utils/account.handler.js";
+import cartDatabase from "./utils/cart.database.js";
+import { getCart, saveCart, updateCartCount } from "./utils/cart.handler.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // ---------------------------
-  // 🔹 Render products safely
-  // ---------------------------
   const productGrid = document.getElementById("product-grid");
 
   if (productGrid) {
@@ -59,67 +31,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateCartCount();
   }
 
-  // ---------------------------
-  // 🔹 Auth link switcher
-  // ---------------------------
-  const authLink = document.getElementById("auth-link");
-  const token = localStorage.getItem("token");
+  isTokenExist();
 
-  if (authLink) {
-    if (token) {
-      authLink.innerHTML = `
-        <a href="#" id="account-btn" class="btn auth-btn">حساب من</a>
-        <a href="#" id="logout-btn" class="btn auth-btn logout-btn">خروج</a>
-      `;
+  applyTheme();
 
-      document.getElementById("logout-btn").addEventListener("click", (e) => {
-        e.preventDefault();
-        localStorage.removeItem("token");
-        localStorage.removeItem("cart");
-        window.location.reload();
-      });
-    } else {
-      authLink.innerHTML = `
-        <a href="login.html" class="btn auth-btn">ورود</a>
-        <a href="signup.html" class="btn auth-btn">ثبت نام</a>
-      `;
-    }
-  }
+  logoutHandler();
 
-  // ---------------------------
-  // 🔹 Dark mode toggle
-  // ---------------------------
-
-  const themeBtn = document.querySelector(".theme-btn");
-  const body = document.body;
-
-  if (themeBtn) {
-    // Apply saved theme
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
-      body.classList.add("dark-mode");
-      themeBtn.textContent = "☀️";
-    }
-
-    themeBtn.addEventListener("click", () => {
-      body.classList.toggle("dark-mode");
-      const isDark = body.classList.contains("dark-mode");
-
-      themeBtn.textContent = isDark ? "☀️" : "🌙";
-      themeBtn.classList.add("rotate");
-      setTimeout(() => themeBtn.classList.remove("rotate"), 500);
-
-      localStorage.setItem("theme", isDark ? "dark" : "light");
-    });
-  }
-
-  const accountBtn = document.getElementById("account-btn");
-  if (accountBtn) {
-    accountBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      window.location.href = "profile.html";
-    });
-  }
+  accountHandler();
 });
 
 document.addEventListener("click", (e) => {
@@ -165,21 +83,13 @@ document.addEventListener("click", (e) => {
   }
 });
 
-function getCart() {
-  return JSON.parse(localStorage.getItem("cart")) || [];
-}
-
-function saveCart(cart) {
-  localStorage.setItem("cart", JSON.stringify(cart));
-}
-
 function addToCart(product) {
   let cart = getCart();
 
   const existing = cart.find((item) => item.id == product.id);
 
   const newQty = existing ? existing.qty : 1;
-  syncCartAddItem(product.id, newQty);
+  cartDatabase.syncCartAddItem(product.id, newQty);
 
   if (existing) {
     existing.qty += 1;
@@ -198,7 +108,7 @@ function increaseQty(id) {
   let cart = getCart();
   let item = cart.find((p) => p.id == id);
   item.qty += 1;
-  syncCartAddItem(id, item.qty);
+  cartDatabase.syncCartAddItem(id, item.qty);
   saveCart(cart);
   updateCartCount();
   return item.qty;
@@ -210,13 +120,13 @@ function decreaseQty(id) {
 
   if (item.qty > 1) {
     item.qty -= 1;
-    syncCartAddItem(id, item.qty);
+    cartDatabase.syncCartAddItem(id, item.qty);
     saveCart(cart);
     updateCartCount();
     return item.qty;
   } else {
     cart = cart.filter((p) => p.id != id);
-    syncCartRemoveItem(id);
+    cartDatabase.syncCartRemoveItem(id);
     saveCart(cart);
     updateCartCount();
     return 0;
@@ -273,43 +183,5 @@ function restoreCartUI() {
     const card = document.querySelector(`.product-card[data-id="${item.id}"]`);
 
     if (card) updateCartButton(card, item.qty);
-  });
-}
-
-function updateCartCount() {
-  const cart = getCart();
-  const count = cart.reduce((sum, item) => sum + item.qty, 0);
-
-  const countElement = document.getElementById("cart-count");
-  if (countElement) {
-    countElement.textContent = count;
-  }
-}
-
-// Cart Req To Backend
-async function syncCartAddItem(productId, quantity) {
-  const token = localStorage.getItem("token");
-  const userId = JSON.parse(atob(token.split(".")[1])).id;
-
-  await fetch("http://localhost:3000/cart/add", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ userId, productId, quantity }),
-  });
-}
-async function syncCartRemoveItem(productId) {
-  const token = localStorage.getItem("token");
-  const userId = JSON.parse(atob(token.split(".")[1])).id;
-
-  await fetch("http://localhost:3000/cart/remove", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ userId, productId }),
   });
 }
