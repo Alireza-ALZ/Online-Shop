@@ -1,3 +1,5 @@
+import applyTheme from "./theme.js";
+
 document.addEventListener("DOMContentLoaded", () => {
   const authLink = document.getElementById("auth-link");
   const token = localStorage.getItem("token");
@@ -31,21 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  const themeBtn = document.querySelector(".theme-btn");
-  const body = document.body;
-  const savedTheme = localStorage.getItem("theme");
-
-  if (savedTheme === "dark") {
-    body.classList.add("dark-mode");
-    themeBtn.textContent = "☀️";
-  }
-
-  themeBtn.addEventListener("click", () => {
-    body.classList.toggle("dark-mode");
-    const isDark = body.classList.contains("dark-mode");
-    themeBtn.textContent = isDark ? "☀️" : "🌙";
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  });
+  applyTheme();
 
   const cartContainer = document.getElementById("cart-container");
   const totalItemsElem = document.getElementById("total-items");

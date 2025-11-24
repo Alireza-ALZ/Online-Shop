@@ -1,3 +1,5 @@
+import applyTheme from "./theme.js";
+
 document.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("token");
 
@@ -7,22 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // Theme system (same as main.js)
-  const themeBtn = document.querySelector(".theme-btn");
-  const body = document.body;
-  const savedTheme = localStorage.getItem("theme");
-
-  if (savedTheme === "dark") {
-    body.classList.add("dark-mode");
-    themeBtn.textContent = "☀️";
-  }
-
-  themeBtn.addEventListener("click", () => {
-    body.classList.toggle("dark-mode");
-    const isDark = body.classList.contains("dark-mode");
-    themeBtn.textContent = isDark ? "☀️" : "🌙";
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  });
+  applyTheme();
 
   // Load user info from backend
   fetch("http://localhost:3000/auth/whoami", {

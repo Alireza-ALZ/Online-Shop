@@ -1,3 +1,5 @@
+import applyTheme from "./theme.js";
+
 const sampleProducts = [
   {
     id: 1,
@@ -34,6 +36,10 @@ const sampleProducts = [
 const BASE_URL = "http://localhost:3000";
 const loginForm = document.getElementById("login-form");
 const signupForm = document.getElementById("signup-form");
+
+document.addEventListener("DOMContentLoaded", () => {
+  applyTheme();
+});
 
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
@@ -99,27 +105,6 @@ if (signupForm) {
       alert("خطا در ارتباط با سرور ❌");
       console.error(err);
     }
-  });
-}
-
-const loginPage = document.querySelector(".login-page");
-const signupPage = document.querySelector(".signup-page");
-
-if (loginPage || signupPage) {
-  const themeBtn = document.querySelector(".theme-btn");
-  const body = document.body;
-  const savedTheme = localStorage.getItem("theme");
-
-  if (savedTheme === "dark") {
-    body.classList.add("dark-mode");
-    themeBtn.textContent = "☀️";
-  }
-
-  themeBtn.addEventListener("click", () => {
-    body.classList.toggle("dark-mode");
-    const isDark = body.classList.contains("dark-mode");
-    themeBtn.textContent = isDark ? "☀️" : "🌙";
-    localStorage.setItem("theme", isDark ? "dark" : "light");
   });
 }
 
