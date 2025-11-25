@@ -1,4 +1,6 @@
 const passwordManager = require("../../common/utils/password");
+const AuthMessages = require("./auth.message");
+const createHttpError = require("http-errors");
 const userModel = require("../user/user.model");
 const autoBind = require("auto-bind");
 
@@ -17,7 +19,7 @@ class AuthService {
     const isExist = allUsers.find(
       (user) => user.username === username || user.email === email
     );
-    if (isExist) throw "User already exist";
+    if (isExist) throw new createHttpError.BadRequest(AuthMessages.userExist);
 
     const user = await this.#model.create({
       username,
@@ -43,9 +45,9 @@ class AuthService {
             phone: user.phone,
           }),
         };
-      throw "Password is incorrect";
+      throw new createHttpError.Unauthorized(AuthMessages.incorrectPassword);
     }
-    throw "User does not exist";
+    throw new createHttpError.NotFound(AuthMessages.userNotExist);
   }
 
   async userInfo(user) {

@@ -9,68 +9,72 @@ document.addEventListener("DOMContentLoaded", () => {
 const loginForm = document.getElementById("login-form");
 const signupForm = document.getElementById("signup-form");
 
-loginForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+if (loginForm) {
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-  try {
-    const res = await fetch("http://localhost:3000/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
+    try {
+      const res = await fetch("http://localhost:3000/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (res.ok) {
-      alert("ورود با موفقیت انجام شد ✅");
+      if (res.ok) {
+        alert("ورود با موفقیت انجام شد ✅");
 
-      if (data.token) localStorage.setItem("token", data.token);
+        if (data.token) localStorage.setItem("token", data.token);
 
-      const items = await cartDatabase.syncCartGetItems();
-      const cart = createCartForLocalStorage(items);
+        const items = await cartDatabase.syncCartGetItems();
+        const cart = createCartForLocalStorage(items);
 
-      localStorage.setItem("cart", JSON.stringify(cart));
+        localStorage.setItem("cart", JSON.stringify(cart));
 
-      window.location.href = "index.html";
-    } else {
-      alert(data.message || "خطا در ورود ❌");
+        window.location.href = "index.html";
+      } else {
+        alert(data.message || "خطا در ورود ❌");
+      }
+    } catch (err) {
+      alert("خطا در ارتباط با سرور ❌");
     }
-  } catch (err) {
-    alert("خطا در ارتباط با سرور ❌");
-  }
-});
+  });
+}
 
-signupForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+if (signupForm) {
+  signupForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const phone = document.getElementById("phone").value.trim();
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
 
-  try {
-    const res = await fetch("http://localhost:3000/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password, email, phone }),
-    });
+    try {
+      const res = await fetch("http://localhost:3000/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password, email, phone }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (res.ok) {
-      alert("ثبت نام با موفقیت انجام شد ✅");
-      window.location.href = "login.html";
-    } else {
-      alert(data.message || "خطا در ثبت نام ❌");
+      if (res.ok) {
+        alert("ثبت نام با موفقیت انجام شد ✅");
+        window.location.href = "login.html";
+      } else {
+        alert(data.message || "خطا در ثبت نام ❌");
+      }
+    } catch (err) {
+      alert("خطا در ارتباط با سرور ❌");
+      console.error(err);
     }
-  } catch (err) {
-    alert("خطا در ارتباط با سرور ❌");
-    console.error(err);
-  }
-});
+  });
+}
 
 function createCartForLocalStorage(items) {
   const cart = [];
